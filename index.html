@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AETHER — xLAM-AETHER-v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--iv:oklch(0.965 0.008 85);--ivl:oklch(0.985 0.006 85);--ivd:oklch(0.90 0.010 85);--bk:oklch(0.16 0.004 60);--or:oklch(0.595 0.175 41);--sh:rgba(20,18,16,.12)}
+*{box-sizing:border-box;margin:0}
+html{background:var(--bk)}
+body{background:var(--bk);color:var(--iv);font:400 17px/1.55 Inter,system-ui,sans-serif;letter-spacing:-.01em;overflow-x:hidden}
+body.lock{overflow:hidden}
+#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0}
+main{position:relative;z-index:1;pointer-events:none}
+a,button,.card,.pill,canvas.ch,#c3{pointer-events:auto}
+h1,h2{font:300 clamp(40px,7vw,80px)/1.08 'Cormorant Garamond',serif;letter-spacing:-.02em}
+h2{font-size:clamp(36px,5.6vw,64px)}
+.sec{position:relative;height:260vh}
+.stick{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 6vw 9vh}
+.col{max-width:520px;display:flex;flex-direction:column;gap:20px}
+.mut{opacity:.72}.dim{opacity:.6;font-size:14px}
+.eb{font:500 11px Inter;text-transform:uppercase;letter-spacing:.08em;color:var(--or)}
+.tag{position:absolute;right:6vw;top:18vh;font:500 11px Inter;text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--iv);box-shadow:2px 2px 0 var(--iv);padding:6px 10px;color:var(--iv)}
+.tag.r{right:auto;left:6vw}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+/* buttons */
+.btn{font:600 15px Inter;letter-spacing:-.01em;padding:12px 20px;border-radius:4px;text-decoration:none;display:inline-block;transition:filter .15s,transform .1s;cursor:pointer}
+.btn:hover{filter:brightness(1.06)}.btn:active{transform:translateY(1px)}
+.btn.p{background:#141210;background:var(--bk);color:var(--iv);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.05),inset 0 0 0 1px rgba(246,242,234,.3)}
+.btn.s{background:transparent;color:var(--iv);border:1px solid var(--iv);box-shadow:inset 2px 2px 4px rgba(0,0,0,.25),inset -2px -2px 4px rgba(246,242,234,.08)}
+.btn.b{background:transparent;color:var(--iv);border:2px solid var(--or);box-shadow:2px 2px 0 var(--iv)}
+.btn.b:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--iv)}
+.btn:focus-visible{outline:2px solid var(--or);outline-offset:3px}
+/* surfaces */
+.card{background:var(--iv);color:var(--bk);border-radius:16px;padding:24px;box-shadow:8px 8px 18px rgba(246,242,234,.07),-8px -8px 18px rgba(246,242,234,.03)}
+.light .card,.charts .card{box-shadow:8px 8px 18px var(--ivd),-8px -8px 18px var(--ivl)}
+.pill{background:var(--iv);color:var(--bk);font:600 14px Inter;padding:10px 20px;border-radius:40px;box-shadow:5px 5px 12px rgba(0,0,0,.25),-3px -3px 8px rgba(246,242,234,.06)}
+.code{font:400 13.5px/1.6 'JetBrains Mono',monospace;background:var(--bk);color:var(--iv);border-radius:4px;padding:16px 18px;box-shadow:inset 3px 3px 8px rgba(0,0,0,.6),inset -2px -2px 6px rgba(246,242,234,.07);overflow-x:auto;white-space:pre;border:1px solid rgba(246,242,234,.22)}
+.code.k{border-radius:8px;border:1px solid var(--iv);font-size:13px}
+.res p{font-size:15px;padding:8px 0;border-top:1px solid rgba(246,242,234,.18)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:760px}
+.card h3{font:600 17px Inter;margin-bottom:8px}.card p{font-size:15px}
+/* numbers */
+.hold{height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 6vw 9vh;gap:22px;position:relative}
+.charts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding:0 6vw 14vh}
+.charts .card{display:flex;flex-direction:column;gap:14px;min-height:340px}
+.charts canvas{width:100%!important;flex:1;min-height:220px}
+#c3{width:100%;flex:1;min-height:240px}
+.cap{font-size:13px;opacity:.75}
+/* limits */
+.light{position:relative;z-index:2;background:var(--iv);color:var(--bk);padding:20vh 6vw;pointer-events:auto}
+.light h2{margin-bottom:60px}
+.rule{border-top:2px solid var(--bk);box-shadow:0 2px 0 var(--bk);padding:26px 0;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.02em;margin-bottom:6px}
+.light .bd{margin-top:50px;font-size:18px;max-width:520px}
+/* closing */
+.close{align-items:center;text-align:center;justify-content:center;padding:0 6vw}
+.close h2{font-size:clamp(36px,6vw,64px);max-width:900px}
+footer{font-size:11px;opacity:.4;margin-top:60px}
+/* preloader */
+#pre{position:fixed;inset:0;z-index:100;background:var(--bk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+#pre svg{position:absolute;width:260px;height:260px}
+#pre h1{font-size:96px;line-height:1;position:relative}
+#pre p{opacity:.6;font-size:16px;position:relative}
+.rm [data-r]{transform:none!important}
+[data-r]{opacity:0}
+@media(max-width:767px){.sec{height:auto}.stick{position:relative;height:auto;min-height:100vh;padding-top:20vh}.charts,.two{grid-template-columns:1fr}.hold{height:auto;min-height:100vh}#pre h1{font-size:60px}.tag{top:10vh}}
+</style></head><body class="lock">
+<div id="pre"><svg viewBox="0 0 260 260"><circle id="ring" cx="130" cy="130" r="120" fill="none" stroke="#c8501c" stroke-width="1.5" transform="rotate(-90 130 130)"/></svg><h1>AETHER</h1><p>Cognitive engine for autonomous agents.</p></div>
+<canvas id="gl"></canvas>
+<main>
+<!-- 1 hero -->
+<section class="sec" data-s><div class="stick"><div class="col">
+<div class="eb" data-r>Project AETHER / xLAM-AETHER-v1</div>
+<h1 data-r>Enterprise-grade agentic reasoning. Under 2GB.</h1>
+<p class="mut" data-r>A 3B ReAct agent that turns natural-language goals into syntactically perfect JSON tool calls — running on a laptop, not a data center.</p>
+<div class="row" data-r><a class="btn p" target="_blank" rel="noopener" href="https://huggingface.co/spaces/iamrahull/xlam-ather">Open Demo</a><a class="btn b" target="_blank" rel="noopener" href="https://huggingface.co/iamrahull/xlam-ather">Model Card</a></div>
+</div></div></section>
+<!-- 2 problem -->
+<section class="sec" data-s><div class="stick"><span class="tag">70B</span><div class="col">
+<h2 data-r>Agentic AI has a weight problem.</h2>
+<p class="mut" data-r>Reliable tool calling usually demands enterprise GPUs. That excludes the builders who need it most.</p>
+<div class="card" data-r>xLAM-AETHER-v1: 3.09B parameters · 1.93 GB · 32k context · runs on system RAM.</div>
+</div></div></section>
+<!-- 3 engine -->
+<section class="sec" data-s><div class="stick"><div class="col" style="max-width:640px">
+<h2 data-r>It does not describe actions. It emits them.</h2>
+<div class="code" data-r>[{"name": "shell", "arguments": {"cmd": "find /tmp/aether-sandbox -type f -name '.tmp'"}}]</div>
+<p class="mut" data-r>Trained on 5,000 verified multi-turn trajectories. Output is parseable by Python or Rust backends on arrival.</p>
+<div class="row" data-r><a class="btn s" href="#stack" id="toStack">View Training Pipeline</a></div>
+</div></div></section>
+<!-- 4 numbers -->
+<section class="sec" data-s style="height:auto"><div class="hold"><span class="tag r">7B–70B class</span><span class="tag">1.93 GB</span>
+<h2 data-r style="max-width:760px">Small footprint. Not small reasoning.</h2>
+<div class="row" data-r><span class="pill">32k context</span><span class="pill">Q4_K_M</span><span class="pill">CC-BY-NC-4.0</span></div></div>
+<div class="charts">
+<div class="card"><canvas id="c1" class="ch"></canvas><div class="cap">625 steps · final loss 0.0003 · 1 epoch on a single T4. Schematic curve; start value not reported.</div></div>
+<div class="card"><canvas id="c2" class="ch"></canvas><div class="cap">1.12s on T4 GPU vs 250s CPU-only prefill (log scale).</div></div>
+<div class="card"><div id="c3"></div><div class="cap">Effective density: 3.09B base + 7.3M adapter → 1.93GB GGUF (column height log-scaled).</div></div>
+</div></section>
+<!-- 5 dual -->
+<section class="sec" data-s><div class="stick"><div style="display:flex;flex-direction:column;gap:22px">
+<h2 data-r style="max-width:820px">Chat when you need to think. JSON when you need to act.</h2>
+<div class="two" data-r><div class="card"><h3>Chat Mode</h3><p>Retains general knowledge and math reasoning. No hallucinated JSON. No catastrophic forgetting.</p></div><div class="card"><h3>Agent Mode</h3><p>Strict ChatML template. Single-array tool calls. Ready for immediate backend execution.</p></div></div>
+<div class="res" data-r style="max-width:520px"><p>Test A: cultural summary — pass.</p><p>Test B: train problem, 150 miles — pass.</p><p>Test C: shell tool call — pass, 1.12s.</p></div>
+</div></div></section>
+<!-- 6 stack -->
+<section class="sec" data-s id="stack"><div class="stick"><div class="col" style="max-width:700px">
+<h2 data-r>Three commands from weights to a working agent loop.</h2>
+<div class="code k" data-r>FROM ./xlam-aether-q4_k_m.gguf</div>
+<div class="code k" data-r>python -m llama_cpp.server --model xlam-aether-q4_k_m.gguf --chat_format chatml</div>
+<div class="code k" data-r>ollama create aether -f Modelfile &amp;&amp; ollama run aether</div>
+<div class="row" data-r><a class="btn p" target="_blank" rel="noopener" href="https://huggingface.co/iamrahull/xlam-ather">Run It Locally</a></div>
+<p class="dim" data-r>Non-commercial license. Commercial use requires re-training on a permissive base.</p>
+</div></div></section>
+<!-- 7 limits -->
+<section class="light" data-s2>
+<h2 data-r>What it is not.</h2>
+<div class="rule" data-r>Not multi-tool parallel yet. Single-action calls only.</div>
+<div class="rule" data-r>Not commercial-licensed. CC-BY-NC-4.0 inherited from xLAM.</div>
+<div class="rule" data-r>Not CPU-fast. Tool-schema prefill is heavy without a GPU.</div>
+<p class="bd" data-r>These are the next training targets, not footnotes.</p>
+</section>
+<!-- 8 close -->
+<section class="sec" data-s><div class="stick close"><div style="display:flex;flex-direction:column;align-items:center;gap:22px">
+<h2 data-r>Agentic AI should not require a data center.</h2>
+<p class="mut" data-r>xLAM-AETHER-v1 is the proof. 3B parameters. 1.93 GB. A free T4.</p>
+<div class="row" data-r><a class="btn p" target="_blank" rel="noopener" href="https://huggingface.co/iamrahull/xlam-ather">Open the Model</a></div>
+<footer data-r>Designed and trained by Rahul · Project AETHER · CC-BY-NC-4.0</footer>
+</div></div></section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
+<script>
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches, MOB=innerWidth<768;
+if(RM)document.body.classList.add('rm');
+const IV=0xf6f2ea,BK=0x141210,OR=0xc8501c,IVD=0xe6dfd0;
+gsap.registerPlugin(ScrollTrigger);
+/* ---------- 3D ---------- */
+const cv=document.getElementById('gl'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));
+const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100);cam.position.z=7;
+sc.add(new THREE.AmbientLight(0xffffff,.75));const dl=new THREE.DirectionalLight(0xffffff,1.1);dl.position.set(3,4,5);sc.add(dl);
+const W=new THREE.Group();sc.add(W);
+const mk=(g,c,o={})=>new THREE.Mesh(g,new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.65,metalness:0},o)));
+const G={};
+// ring
+G.ring=new THREE.Group();const arcs=[];
+for(let i=0;i<3;i++){const m=mk(new THREE.TorusGeometry(1.5,.14,32,100,1.75),IV,{emissive:OR,emissiveIntensity:0});m.rotation.z=i*2.094;m.userData.a=i*2.094+.875;G.ring.add(m);arcs.push(m)}
+// wire cube (70B)
+const edges=s=>new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(s,s,s)),new THREE.LineBasicMaterial({color:IV,transparent:true,opacity:0}));
+G.wire=edges(6.5);G.block=mk(new THREE.BoxGeometry(.9,.9,.9),IV);
+// particles
+const N=MOB?280:700,pos=new Float32Array(N*3),A=new Float32Array(N*3),B=new Float32Array(N*3),S=new Float32Array(N*3);
+const segs=[[-2.6,-.8,-2.6,.8],[-2.6,.8,-2.3,.8],[-2.6,-.8,-2.3,-.8],[2.6,-.8,2.6,.8],[2.6,.8,2.3,.8],[2.6,-.8,2.3,-.8],[-1.7,.7,-1.5,0],[-1.5,0,-1.7,-.7],[1.7,.7,1.5,0],[1.5,0,1.7,-.7]];
+for(let i=0;i<N;i++){const s=segs[i%segs.length],t=Math.random();A.set([s[0]+(s[2]-s[0])*t,s[1]+(s[3]-s[1])*t,(Math.random()-.5)*.2],i*3);
+B.set([-2.6+5.2*(i/N),(Math.random()-.5)*.04,0],i*3);S.set([(Math.random()-.5)*.9,(Math.random()-.5)*.9,(Math.random()-.5)*.9],i*3)}
+const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+G.parts=new THREE.Points(pg,new THREE.PointsMaterial({color:IV,size:.05}));
+// cubes
+G.ghost=mk(new THREE.BoxGeometry(3.4,3.4,3.4),IV,{transparent:true,opacity:.25});
+G.dark=new THREE.Group();G.dark.add(mk(new THREE.BoxGeometry(.95,.95,.95),BK,{roughness:.5}),mk(new THREE.BoxGeometry(.35,.35,.35),OR,{emissive:OR,emissiveIntensity:1.5}));
+const pl=new THREE.PointLight(OR,2,4);G.dark.add(pl);
+// dual
+G.dual=new THREE.Group();
+const hemi=mk(new THREE.SphereGeometry(.75,48,32,0,Math.PI),IV,{side:THREE.DoubleSide,roughness:.35});hemi.rotation.y=-Math.PI/2;
+const lat=new THREE.Mesh(new THREE.BoxGeometry(.75,1.5,1.5,3,6,6),new THREE.MeshStandardMaterial({color:BK}));lat.position.x=.375;
+const latW=new THREE.LineSegments(new THREE.WireframeGeometry(lat.geometry),new THREE.LineBasicMaterial({color:OR}));latW.position.x=.375;
+G.dual.add(hemi,lat,latW);
+// slabs
+G.slabs=new THREE.Group();const sl=[];
+for(let i=0;i<3;i++){const m=mk(new THREE.BoxGeometry(2.6,.14,1.4),i==0?IV:IVD,{roughness:.4});G.slabs.add(m);sl.push(m)}
+const grid=new THREE.GridHelper(9,18,IV,IV);grid.material.transparent=true;grid.material.opacity=.12;grid.position.y=-1;G.slabs.add(grid);
+Object.values(G).forEach(g=>{g.scale.setScalar(.0001);W.add(g)});
+const vis={0:['ring'],1:['ring','wire','block'],2:['block','parts'],3:['ghost','dark'],4:['dual'],5:['slabs'],6:[],7:['ring']};
+let act=0,tp=0,cp=0;
+const L=(a,b,t)=>a+(b-a)*t,E=t=>t*t*(3-2*t),C=t=>Math.min(1,Math.max(0,t));
+function frame(t){
+ const p=RM?.5:cp,T=t*.001;
+ W.position.x=innerWidth>900?1.7:0;
+ const on=vis[act];
+ for(const k in G){const s=on.includes(k)?1:.0001;G[k].scale.setScalar(L(G[k].scale.x,s,.09))}
+ arcs.forEach((m,i)=>{m.material.emissiveIntensity=L(m.material.emissiveIntensity,act==7?1.2:(i==0?.5+.4*Math.sin(T*1.6):0),.1);m.position.set(0,0,0)});
+ G.ring.rotation.set(0,0,0);G.parts.material.color.setHex(IV);G.wire.material.opacity=0;
+ let cz=6.2;
+ if(act==0){G.ring.rotation.y=p*Math.PI*1.2;cz=L(7,5.6,p)}
+ if(act==1){const s=Math.sin(p*Math.PI)*1.9;arcs.forEach(m=>{m.position.set(Math.cos(m.userData.a)*s,Math.sin(m.userData.a)*s,Math.sin(p*3+m.userData.a)*s*.4)});G.ring.rotation.z=p*5;G.wire.material.opacity=Math.sin(p*Math.PI)*.55;G.wire.rotation.y=p;if(p>.8)G.ring.scale.setScalar(Math.max(.0001,L(G.ring.scale.x,.0001,.3)))}
+ if(act==2){const a=E(C(p*2)),b=E(C((p-.5)*2));for(let i=0;i<N*3;i++){pos[i]=p<.5?L(S[i],A[i],a):L(A[i],B[i],b)+(p<.5?0:0)}pg.attributes.position.needsUpdate=true;if(p>.5)G.parts.material.color.setHex(OR);G.parts.material.size=p>.8?.07:.05;G.block.rotation.y=p*3}
+ if(act==3){G.ghost.position.x=L(-1.2,-4,p);G.ghost.rotation.y=p;G.ghost.material.opacity=.3*(1-p*.8);G.dark.position.x=L(2.3,0,E(p));G.dark.rotation.y=p*2;pl.intensity=1.5+Math.sin(T*2)}
+ if(act==4){G.dual.rotation.y=p*Math.PI*2;G.dual.rotation.x=.3}
+ if(act==5){const e=E(p);G.slabs.rotation.x=L(-.9,-.25,e);G.slabs.rotation.y=-.5;sl.forEach((m,i)=>{m.position.set((i-1)*L(2.6,0,e),(i-1)*L(0,.7,e),0)})}
+ if(act==7){G.ring.rotation.y=L(0,Math.PI*2.5,E(p));}
+ cam.position.set(RM?0:Math.sin(p*2+act)*.35,RM?0:Math.cos(p+act)*.15,RM?6.2:cz);cam.lookAt(0,0,0);
+ cp=L(cp,tp,.08);R.render(sc,cam)}
+function size(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+size();addEventListener('resize',()=>{size();ScrollTrigger.refresh()});
+gsap.ticker.add(frame);
+/* ---------- scroll ---------- */
+let lenis;
+if(!RM&&window.Lenis){lenis=new Lenis({lerp:.07,smoothWheel:true});lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);lenis.stop()}
+document.getElementById('toStack').onclick=e=>{e.preventDefault();const el=document.getElementById('stack');lenis?lenis.scrollTo(el,{duration:2.4}):el.scrollIntoView({behavior:'smooth'})};
+function build(){
+ // map scenes to the 8 sections
+ const secs=[...document.querySelectorAll('[data-s],[data-s2]')];
+ secs.forEach((el,i)=>ScrollTrigger.create({trigger:el,start:i==3?'top 70%':'top top',end:i==3?'bottom bottom':'bottom bottom',onToggle:s=>{if(s.isActive&&act!=i){act=i;cp=tp=s.progress}},onUpdate:s=>{if(s.isActive)tp=s.progress}}));
+ ScrollTrigger.batch('[data-r]',{start:'top 88%',onEnter:b=>gsap.fromTo(b,RM?{opacity:0}:{y:44,opacity:0},{y:0,opacity:1,duration:RM?.6:1.5,stagger:.16,ease:'power3.out',overwrite:true})});
+ // charts
+ const ink='#141210',or='#c8501c',ax={grid:{display:false},border:{color:ink},ticks:{color:ink,font:{family:'Inter',size:11}}};
+ const loss=[],lab=[];for(let s=0;s<=625;s+=12.5){lab.push(Math.round(s));loss.push(+(.0003+.9*Math.exp(-s/45)).toFixed(4))}loss[loss.length-1]=.0003;
+ let c1,c2,done=false;
+ const mk1=()=>{c1=new Chart(c1el,{type:'line',data:{labels:lab,datasets:[{data:loss,borderColor:or,borderWidth:2,pointRadius:0,tension:.3,fill:true,backgroundColor:'rgba(200,80,28,.06)'}]},options:{animation:{duration:2200},plugins:{legend:{display:false},title:{display:true,text:'Training loss',color:ink,font:{family:'Inter',weight:600}}},scales:{x:Object.assign({},ax,{ticks:{color:ink,maxTicksLimit:2,callback:(v,i)=>i==0?'0':'625'}}),y:{display:false}}}})};
+ const mk2=()=>{c2=new Chart(c2el,{type:'bar',data:{labels:['GPU (T4)','CPU only'],datasets:[{data:[1.12,250],backgroundColor:[or,'rgba(246,242,234,1)'],borderColor:[or,ink],borderWidth:[0,1.5]}]},options:{indexAxis:'y',animation:{duration:1800},plugins:{legend:{display:false},title:{display:true,text:'Latency · log scale',color:ink,font:{family:'Inter',weight:600}}},scales:{x:{type:'logarithmic',min:.5,max:500,grid:{color:'rgba(20,18,16,.08)'},border:{color:ink},ticks:{color:ink,callback:v=>[1,10,100].includes(v)?v+'s':''}},y:ax}}})};
+ const c1el=document.getElementById('c1'),c2el=document.getElementById('c2');
+ ScrollTrigger.create({trigger:c1el,start:'top 80%',once:true,onEnter:()=>{mk1();mk2()}});
+ try{const e3=echarts.init(document.getElementById('c3'),'dark');const h=v=>+(Math.log10(v)+3).toFixed(2);
+  e3.setOption({backgroundColor:'transparent',visualMap:{show:false,min:h(.0073),max:h(3.09),dimension:2,inRange:{color:[or,'#e6dfd0']}},
+  xAxis3D:{type:'category',data:['Base 3.09B','LoRA 7.3M','GGUF 1.93GB'],axisLine:{lineStyle:{color:ink}},axisLabel:{color:ink,fontSize:10},axisTick:{lineStyle:{color:ink}}},
+  yAxis3D:{type:'category',data:[''],axisLine:{lineStyle:{color:ink}},axisLabel:{show:false}},
+  zAxis3D:{type:'value',min:0,max:3.6,axisLine:{lineStyle:{color:ink}},axisLabel:{show:false},splitLine:{lineStyle:{color:'rgba(20,18,16,.2)'}}},
+  grid3D:{boxWidth:110,boxDepth:40,boxHeight:70,axisLine:{lineStyle:{color:ink}},splitLine:{lineStyle:{color:'rgba(20,18,16,.2)'}},axisPointer:{show:false},environment:'none',light:{main:{intensity:1.2,alpha:40,beta:40},ambient:{intensity:.5}},viewControl:{alpha:22,beta:20,distance:210,autoRotate:false,rotateSensitivity:0,zoomSensitivity:0,panSensitivity:0}},
+  series:[{type:'bar3D',shading:'lambert',bevelSize:.2,data:[[0,0,h(3.09)],[1,0,h(.0073)],[2,0,h(1.93)]]}]});
+  ScrollTrigger.create({trigger:'#c3',start:'top bottom',end:'bottom top',onUpdate:s=>{if(!RM)e3.setOption({grid3D:{viewControl:{beta:20+s.progress*150}}})}});
+  addEventListener('resize',()=>e3.resize())}catch(e){console.warn(e)}
+}
+/* ---------- preloader ---------- */
+const ring=document.getElementById('ring'),len=2*Math.PI*120;
+gsap.set(ring,{strokeDasharray:len,strokeDashoffset:len});
+gsap.timeline({onComplete:()=>{document.getElementById('pre').remove();document.body.classList.remove('lock');lenis&&lenis.start();build();ScrollTrigger.refresh()}})
+ .to(ring,{strokeDashoffset:0,duration:1.2,ease:'power2.inOut'})
+ .to({}, {duration:.8})
+ .to(ring,{scale:RM?1:7,transformOrigin:'50% 50%',opacity:0,duration:1.1,ease:'power3.in'},'a')
+ .to('#pre h1,#pre p',{opacity:0,duration:.6},'a')
+ .to('#pre',{opacity:0,duration:.8},'a+=.4');
+</script></body></html>
